@@ -1,16 +1,28 @@
 package com.example.proyectotareaslista;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private RecyclerView recyclerView;
+
+//    private List<String> dataList;
+    private List<ListItemm> itemList;
+
+    private CustomAdapter customAdapter;
+
 
 
 
@@ -19,58 +31,67 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ImageView left = findViewById(R.id.left_icon);
-        ImageView menu = findViewById(R.id.menu_icon);
-        TextView title = findViewById(R.id.title_tool);
 
-        left.setOnClickListener(new View.OnClickListener() {
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        itemList = new ArrayList<>();
+        itemList.add(new ListItemm("Elemento 1", "Descripción del elemento 1"));
+        itemList.add(new ListItemm("Elemento 2", "Descripción del elemento 2"));
+        itemList.add(new ListItemm("Elemento 3", "Descripción del elemento 3"));
+
+        customAdapter = new CustomAdapter(itemList);
+        recyclerView.setAdapter(customAdapter);
+
+        RecyclerView.ItemAnimator itemAnimator = new DefaultItemAnimator();
+        itemAnimator.setAddDuration(500); // Duración de la animación de agregado (en milisegundos)
+        itemAnimator.setRemoveDuration(500); // Duración de la animación de eliminación (en milisegundos)
+        itemAnimator.setChangeDuration(500); // Duración de la animación de cambio (en milisegundos)
+        itemAnimator.setMoveDuration(500); // Duración de la animación de movimiento (en milisegundos)
+        recyclerView.setItemAnimator(itemAnimator);
+
+//        Button addButton = findViewById(R.id.addButton);
+
+//        Button removeButton = findViewById(R.id.removeButton);
+//
+//        removeButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                removeItem();
+//            }
+//        });
+
+        ImageView deletebtn = findViewById(R.id.deletebtn);
+                deletebtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        removeItem();
+                    }
+                });
+
+        ImageView addBtn = findViewById(R.id.addbtn);
+
+        addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                showPopupMenu(v);
-                //Toast.makeText(MainActivity.this,"LEFT",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, ADDTAREA.class);
+                startActivity(intent);
             }
         });
-
-        menu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this,"MENU",Toast.LENGTH_SHORT).show();
-            }
-        });
-
 
     }
 
-    private void showPopupMenu(View view) {
-        PopupMenu popupMenu = new PopupMenu(this, view);
-        popupMenu.inflate(R.menu.popup_menu); // Crea un archivo XML llamado popup_menu en res/menu con las opciones del menú
-
-        // Configura el listener para manejar las acciones del menú
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                // Maneja las acciones correspondientes a las opciones del menú
-                switch (item.getItemId()) {
-                    case R.id.option1:
-
-                        // Acción para la opción 1
-                        return true;
-                    case R.id.option1:
-
-                        // Acción para la opción 2
-                        return true;
-                    // Agrega más casos según tus necesidades
-                }
-                return false;
-            }
-        });
-
-        popupMenu.show();
+private void removeItem(){
+    if (!itemList.isEmpty())
+    {
+        int lastIndex = itemList.size()-1;
+        itemList.remove(lastIndex);
+        customAdapter.notifyItemRemoved(lastIndex);
     }
-
-
 }
+}
+
+
 
 
 
